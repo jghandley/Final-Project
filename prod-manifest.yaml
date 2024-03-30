@@ -3,28 +3,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prod-stedi-amanda
+  name: prod-stedi-jesse
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prod-stedi-amanda
+      app: prod-stedi-jesse
   template:
     metadata:
       labels:
-        app: prod-stedi-amanda
+        app: prod-stedi-jesse
     spec:
       containers:
-        - name: prod-stedi-amanda
-          image: us-docker.pkg.dev/w09-project/amanda-api/stedi-api:latest # This image needs to refer to the NEW Artifact registry repositorry
+        - name: prod-stedi-jesse
+          image: us-docker.pkg.dev/w09-project/jesse-api/stedi-api:latest # This image needs to refer to the NEW Artifact registry repositorry
           env:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: redis-secrets-amanda
+                  name: redis-secrets-jesse
                   key: REDIS_PASS
             - name: REDIS_HOST
-              value: "redis-stedi-amanda"
+              value: "redis-stedi-jesse"
             - name: REDIS_PORT
               value: "6379"
             - name: REDIS_DB
@@ -34,7 +34,7 @@ spec:
             - name: TWILIO_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: amanda-twilio-dev
+                  name: jesse-twilio-dev
                   key: twilio_token
           ports:
             - containerPort: 443
@@ -55,10 +55,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prod-stedi-amanda-nodeport
+  name: prod-stedi-jesse-nodeport
 spec:
   selector:
-    app: prod-stedi-amanda
+    app: prod-stedi-jesse
   type: NodePort
   ports:
     - port: 80
@@ -67,10 +67,10 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: prod-stedi-amanda-ingress
+  name: prod-stedi-jesse-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: prod-stedi-amanda-public # This IP has not been created yet - need to create first 34.102.229.239
-    networking.gke.io/managed-certificates: prod-stedi-amanda-certificate
+    kubernetes.io/ingress.global-static-ip-name: prod-stedi-jesse-public # This IP has not been created yet - need to create first 34.102.229.239
+    networking.gke.io/managed-certificates: prod-stedi-jesse-certificate
     # kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
@@ -80,15 +80,15 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: prod-stedi-amanda-nodeport # This needs to match line 53
+            name: prod-stedi-jesse-nodeport # This needs to match line 53
             port:
               number: 80
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: prod-stedi-amanda-certificate # This needs to match line 68
+  name: prod-stedi-jesse-certificate # This needs to match line 68
 spec:
   domains:
-    - amanda-gabe-mike-mckenna-michael.cit262.com # This is a DNS record that has not been created yet - we need to create that first
+    - jesse-gabe-mike-mckenna-michael.cit262.com # This is a DNS record that has not been created yet - we need to create that first
     
